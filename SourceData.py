@@ -2,8 +2,9 @@ from openpyxl import load_workbook
 from openpyxl.cell.cell import Cell
 import pandas as pd
 
-# FILE_PATH = "../Auxiliaration/SourceData/"
+
 FILE_PATH = "./SourceData/"
+
 
 class WBS:
     def __init__(self, *fileName: str) -> None:
@@ -106,16 +107,16 @@ class Utils:
     def paragraphing(sd: SensorData, ranger: Ranger) -> tuple[SensorData, SensorData]:
         if ranger.start >= ranger.end or ranger.start < 0 or ranger.end > 204800:
             raise Exception("Index Out of Range")
-
-        mid_x1 = sd.x1[ranger.start: ranger.end]
-        mid_y1 = sd.y1[ranger.start: ranger.end]
-        mid_z1 = sd.z1[ranger.start: ranger.end]
-        mid_x2 = sd.x2[ranger.start: ranger.end]
-        mid_y2 = sd.y2[ranger.start: ranger.end]
-        mid_z2 = sd.z2[ranger.start: ranger.end]
-        mid_x3 = sd.x3[ranger.start: ranger.end]
-        mid_y3 = sd.y3[ranger.start: ranger.end]
-        mid_z3 = sd.z3[ranger.start: ranger.end]
+        
+        mid_x1 = sd.x1[ranger.start : ranger.end]
+        mid_y1 = sd.y1[ranger.start : ranger.end]
+        mid_z1 = sd.z1[ranger.start : ranger.end]
+        mid_x2 = sd.x2[ranger.start : ranger.end]
+        mid_y2 = sd.y2[ranger.start : ranger.end]
+        mid_z2 = sd.z2[ranger.start : ranger.end]
+        mid_x3 = sd.x3[ranger.start : ranger.end]
+        mid_y3 = sd.y3[ranger.start : ranger.end]
+        mid_z3 = sd.z3[ranger.start : ranger.end]
 
         rem_x1 = sd.x1[: ranger.start] + sd.x1[ranger.end :]
         rem_y1 = sd.y1[: ranger.start] + sd.y1[ranger.end :]
@@ -126,7 +127,7 @@ class Utils:
         rem_x3 = sd.x3[: ranger.start] + sd.x3[ranger.end :]
         rem_y3 = sd.y3[: ranger.start] + sd.y3[ranger.end :]
         rem_z3 = sd.z3[: ranger.start] + sd.z3[ranger.end :]
-
+        
         mid_sensor_data = Utils.subconstructor(
             mid_x1,
             mid_y1,
@@ -151,18 +152,4 @@ class Utils:
             rem_z3,
             state=sd.state,
         )
-        
         return mid_sensor_data, rem_sensor_data
-
-
-if __name__ == "__main__":
-    workbooks_of_1st_machine = WBS("sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1")
-    state_off_output = SensorData(workbooks_of_1st_machine, "3")
-    # state_turbo_jump = SensorData(wbs, "9")
-    mid, rem = Utils.paragraphing(state_off_output, Ranger(start=102400, end=122880))
-    print(mid.dataframing().tail())
-    print(rem.dataframing().head())
-    print(type(rem.x1[0]))
-    # print(state_off_output.head())
-    # print(state_turbo_jump.head())
-    workbooks_of_1st_machine.wclose()
