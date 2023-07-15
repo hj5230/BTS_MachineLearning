@@ -2,3 +2,5 @@ __pycache__
 .vscode
 Grocery/
 SourceData/
+TestResults/*.tar.xz
+*.sh

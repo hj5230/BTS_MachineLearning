@@ -15,27 +15,14 @@ if __name__ == "__main":
     # Specifies the range of the predicting dataset
     ranger = Ranger(end=204800, length=204800)
 
+    print("Loading workbooks of 1st machine...\n")
+
     # Load three workbooks with data from the first worm reducer
     workbooks_of_1st_machine = WBS(
         "sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1"
     )
 
-    # Divide dataset into a training part and a prediction part
-    # _, state_normal_train = Utils.paragraphing(
-    #     SensorData(workbooks_of_1st_machine, "1"), ranger
-    # )
-    # _, state_off_output_train = Utils.paragraphing(
-    #     SensorData(workbooks_of_1st_machine, "3"), ranger
-    # )
-    # _, state_turbo_jump_train = Utils.paragraphing(
-    #     SensorData(workbooks_of_1st_machine, "9"), ranger
-    # )
-    # _, state_bearing_scratch_train = Utils.paragraphing(
-    #     SensorData(workbooks_of_1st_machine, "13"), ranger
-    # )
-    # _, state_turbine_scratch_train = Utils.paragraphing(
-    #     SensorData(workbooks_of_1st_machine, "15"), ranger
-    # )
+    print("Workbooks of 1st machine successfully loaded, Now training model...\n")
 
     # Train the model with "RandormForest" constructor
     model = RandomForest(
@@ -46,10 +33,14 @@ if __name__ == "__main":
         SensorData(workbooks_of_1st_machine, "15"),
     )
 
+    print("Loading workbooks of 2nd machine...\n")
+
     # Load three workbooks with data from the second worm reducer
     workbooks_of_2nd_machine = WBS(
         "sDataF_P1XYZ_0208_1", "sDataF_P2XYZ_0208_1", "sDataF_P3XYZ_0208_1"
     )
+
+    print("Workbooks of 2nd machine successfully loaded, Now paragraphing...\n")
 
     # Divide dataset into a training part and a prediction part
     state_normal_test, _ = Utils.paragraphing(
@@ -68,6 +59,8 @@ if __name__ == "__main":
         SensorData(workbooks_of_2nd_machine, "15"), ranger
     )
 
+    print("Paragraphing completed, Now predicting state...\n")
+
     # Predict with trained model and print the prediction result
     predicted_state = model.predict_state(state_normal_test)
     print("Predicted state:", predicted_state[0])
@@ -80,5 +73,9 @@ if __name__ == "__main":
     predicted_state = model.predict_state(state_turbine_scratch_test)
     print("Predicted state:", predicted_state[0])
 
+    print("\nState prediction completed, Now closing workbooks...\n")
+
     # Close workbooks
     workbooks_of_1st_machine.wclose()
+
+    print("Workbooks closed, Exiting...")
