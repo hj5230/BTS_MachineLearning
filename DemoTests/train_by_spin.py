@@ -5,7 +5,10 @@
 13: upper bearing rolling body scratch positive rotation (input shaft bearing roller)
 15: Turbine scratch forward rotation (intermediate shaft and worm contact part)
 """
+from sys import path as SYS_PATH
+from os import getcwd
 
+SYS_PATH.append(getcwd())
 
 from SourceData import *
 from RandomForest import *
@@ -23,7 +26,9 @@ MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
 if __name__ == "__main__":
     print("Opening workbooks...\n")
 
-    workbooks_of_1st_machine = WBS("sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1")
+    workbooks_of_1st_machine = WBS(
+        "sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1"
+    )
 
     states = ["1", "3", "9", "13", "15"]
     trained_models = {}
@@ -51,8 +56,12 @@ if __name__ == "__main__":
 
     # Testing the models with the last rotation data
     for state in states:
-        ranger = Ranger(start=(MAX_INT_ROT - 1) * ROWS_PER_ROT, end=MAX_INT_ROT * ROWS_PER_ROT)
-        test_data, _ = Utils.paragraphing(SensorData(workbooks_of_1st_machine, state), ranger)
+        ranger = Ranger(
+            start=(MAX_INT_ROT - 1) * ROWS_PER_ROT, end=MAX_INT_ROT * ROWS_PER_ROT
+        )
+        test_data, _ = Utils.paragraphing(
+            SensorData(workbooks_of_1st_machine, state), ranger
+        )
 
         predicted_state = trained_models[state].predict_state(test_data)
         print(f"State {state} - Predicted state: {predicted_state[0]}")

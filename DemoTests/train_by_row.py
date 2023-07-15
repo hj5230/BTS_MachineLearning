@@ -6,6 +6,10 @@
 15: Turbine scratch forward rotation (intermediate shaft and worm contact part)
 """
 
+from sys import path as SYS_PATH
+from os import getcwd
+
+SYS_PATH.append(getcwd())
 
 from SourceData import *
 from RandomForest import *
