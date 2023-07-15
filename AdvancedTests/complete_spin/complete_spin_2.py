@@ -30,7 +30,7 @@ if __name__ == "__main__":
     with open(EXPORT, mode="w") as file:
         writer = csv.writer(file)
         writer.writerow(["rounds\\state", "1", "3", "9", "13", "15"])
-        for i in range(0, MAX_INT_ROT):
+        for i in range(1, MAX_INT_ROT + 1):
             print(f"Testing round {i}...")
 
             train_data = []
