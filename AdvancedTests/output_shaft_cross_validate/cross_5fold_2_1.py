@@ -1,5 +1,5 @@
 from sys import argv as ARGV, path as SYS_PATH
-from os import getcwd
+from os import getcwd, path as OS_PATH
 
 SYS_PATH.append(getcwd())
 
@@ -22,14 +22,20 @@ MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
 TRAIN_ROUNDS = 32
 TEST_ROUNDS = 8
 REPEAT = 10
-EXPORT = f"./TestResults/{ARGV[0]}.csv"
+
+FPATH = OS_PATH.basename(ARGV[0])
+EXPORT = f"./TestResults/{FPATH}.csv"
 
 
 if __name__ == "__main__":
-    print(f"Executing: {ARGV[0]}\nTest start: {datetime.now()}\nLoading workbooks...")
+    print(f"Executing: {FPATH}\nTest start: {datetime.now()}\nLoading workbooks...")
 
-    train_workbooks = WBS("sDataF_P1XYZ_0208_1", "sDataF_P2XYZ_0208_1", "sDataF_P3XYZ_0208_1")
-    test_workbooks = WBS("sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1")
+    train_workbooks = WBS(
+        "sDataF_P1XYZ_0208_1", "sDataF_P2XYZ_0208_1", "sDataF_P3XYZ_0208_1"
+    )
+    test_workbooks = WBS(
+        "sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1"
+    )
     state_list = ["1", "3", "9", "13", "15"]
 
     with open(EXPORT, mode="w") as file:
@@ -46,8 +52,12 @@ if __name__ == "__main__":
             train_data = []
             for state in state_list:
                 for round_ in train_rounds:
-                    ranger = Ranger(start=(round_ - 1) * ROWS_PER_ROT, length=ROWS_PER_ROT)
-                    segment, rem = Utils.paragraphing(SensorData(train_workbooks, state), ranger)
+                    ranger = Ranger(
+                        start=(round_ - 1) * ROWS_PER_ROT, length=ROWS_PER_ROT
+                    )
+                    segment, rem = Utils.paragraphing(
+                        SensorData(train_workbooks, state), ranger
+                    )
                     train_data.append(segment)
 
             model = RandomForest(*train_data)
@@ -55,8 +65,12 @@ if __name__ == "__main__":
             for round_ in test_rounds:
                 test_data = []
                 for state in state_list:
-                    ranger = Ranger(start=(round_ - 1) * ROWS_PER_ROT, length=ROWS_PER_ROT)
-                    test_segment, _ = Utils.paragraphing(SensorData(test_workbooks, state), ranger)
+                    ranger = Ranger(
+                        start=(round_ - 1) * ROWS_PER_ROT, length=ROWS_PER_ROT
+                    )
+                    test_segment, _ = Utils.paragraphing(
+                        SensorData(test_workbooks, state), ranger
+                    )
                     test_data.append(test_segment)
 
                 predicted_states = []

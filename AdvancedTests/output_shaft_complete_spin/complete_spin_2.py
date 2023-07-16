@@ -1,5 +1,5 @@
 from sys import argv as ARGV, path as SYS_PATH
-from os import getcwd
+from os import getcwd, path as OS_PATH
 
 SYS_PATH.append(getcwd())
 
@@ -16,11 +16,13 @@ RPM = 305
 RPS = RPM / 60
 ROWS_PER_ROT = ceil(HZ / RPS)
 MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
-EXPORT = f"./TestResults/{ARGV[0]}.csv"
+
+FPATH = OS_PATH.basename(ARGV[0])
+EXPORT = f"./TestResults/{FPATH}.csv"
 
 
 if __name__ == "__main__":
-    print(f"Executing: {ARGV[0]}\nTest start: {datetime.now()}\nLoading workbooks...")
+    print(f"Executing: {FPATH}\nTest start: {datetime.now()}\nLoading workbooks...")
 
     workbooks = WBS("sDataF_P1XYZ_0208_1", "sDataF_P2XYZ_0208_1", "sDataF_P3XYZ_0208_1")
     state_list = ["1", "3", "9", "13", "15"]

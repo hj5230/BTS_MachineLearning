@@ -5,7 +5,7 @@
     
     python3 -u "./AdvancedTests/output_shaft_cross_validate/cross_5fold_1.py"
 
-    python3 -u "./AdvancedTests/output_shaft_cross_validate/ross_5fold_2.py"
+    python3 -u "./AdvancedTests/output_shaft_cross_validate/cross_5fold_2.py"
 
     python3 -u "./AdvancedTests/output_shaft_cross_validate/cross_5fold_1_2.py"
 
