@@ -4,4 +4,3 @@ Grocery/
 SourceData/*.xlsx
 TestResults/*.tar.xz
 TestLogs/
-*.sh

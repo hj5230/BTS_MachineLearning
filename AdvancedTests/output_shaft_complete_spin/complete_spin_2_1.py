@@ -1,4 +1,4 @@
-from sys import path as SYS_PATH
+from sys import argv as ARGV, path as SYS_PATH
 from os import getcwd
 
 SYS_PATH.append(getcwd())
@@ -15,14 +15,14 @@ RPM = 305
 RPS = RPM / 60
 ROWS_PER_ROT = ceil(HZ / RPS)
 MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
-EXPORT = './TestResults/complete_1_2.csv'
+EXPORT = f"./TestResults/{ARGV[0]}.csv"
 
 
 if __name__ == '__main__':
-    print(f"Test start: {datetime.now()}\nLoading workbooks...")
+    print(f"Executing: {ARGV[0]}\nTest start: {datetime.now()}\nLoading workbooks...")
 
-    train_workbooks = WBS("sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1")
-    test_workbooks = WBS("sDataF_P1XYZ_0208_1", "sDataF_P2XYZ_0208_1", "sDataF_P3XYZ_0208_1")
+    train_workbooks = WBS("sDataF_P1XYZ_0208_1", "sDataF_P2XYZ_0208_1", "sDataF_P3XYZ_0208_1")
+    test_workbooks = WBS("sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1")
     state_list = ["1", "3", "9", "13", "15"]
 
     print("Workbooks loaded, starting tests...")
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
         for i in range(1, MAX_INT_ROT + 1):
             print(f"Testing round {i}")
-
+            
             test_data = []
             for state in state_list:
                 ranger = Ranger(start=(i-1)*ROWS_PER_ROT, length=ROWS_PER_ROT)
