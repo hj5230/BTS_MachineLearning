@@ -10,4 +10,4 @@
     python3 -u "./AdvancedTests/output_shaft_cross_validate/cross_5fold_1_2.py"
 
     python3 -u "./AdvancedTests/output_shaft_cross_validate/cross_5fold_2_1.py"
-} | tee "./TestLogs/complete_spin.log"
+} | tee "./TestLogs/cross_validate.log"
