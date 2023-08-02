@@ -18,7 +18,7 @@ ROWS_PER_ROT = ceil(HZ / RPS)
 MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
 
 FPATH = OS_PATH.basename(ARGV[0])
-EXPORT = f"./TestResults/{FPATH}.csv"
+EXPORT = f"./TestResults/random_forest/output_shaft_complete_spin/{FPATH}.csv"
 
 
 if __name__ == "__main__":

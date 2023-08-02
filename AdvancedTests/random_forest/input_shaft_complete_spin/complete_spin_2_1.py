@@ -12,19 +12,24 @@ from datetime import datetime
 
 ROWS = 204800
 HZ = 25600
-RPM = 305
+RPM = 1475
 RPS = RPM / 60
 ROWS_PER_ROT = ceil(HZ / RPS)
 MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
 
 FPATH = OS_PATH.basename(ARGV[0])
-EXPORT = f"./TestResults/random_forest/output_shaft_complete_spin/{FPATH}.csv"
+EXPORT = f"./TestResults/random_forest/input_shaft_complete_spin/{FPATH}.csv"
 
 
 if __name__ == "__main__":
     print(f"Executing: {FPATH}\nTest start: {datetime.now()}\nLoading workbooks...")
 
-    workbooks = WBS("sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1")
+    train_workbooks = WBS(
+        "sDataF_P1XYZ_0208_1", "sDataF_P2XYZ_0208_1", "sDataF_P3XYZ_0208_1"
+    )
+    test_workbooks = WBS(
+        "sDataF_P1XYZ_0222_1", "sDataF_P2XYZ_0222_1", "sDataF_P3XYZ_0222_1"
+    )
     state_list = ["1", "3", "9", "13", "15"]
 
     print("Workbooks loaded, starting tests...")
@@ -32,26 +37,34 @@ if __name__ == "__main__":
     with open(EXPORT, mode="w") as file:
         writer = csv.writer(file)
         writer.writerow(["rounds\\state", "1", "3", "9", "13", "15"])
-        for i in range(1, MAX_INT_ROT + 1):
-            print(f"Testing round {i}...")
 
-            train_data = []
-            test_data = []
+        train_data = []
 
-            for state in state_list:
-                for j in range(i):
-                    ranger = Ranger(start=j * ROWS_PER_ROT, length=ROWS_PER_ROT)
-                    segment, rem = Utils.paragraphing(
-                        SensorData(workbooks, state), ranger
-                    )
-                    train_data.append(segment)
+        print("Paragraphing...")
+
+        for state in state_list:
+            for i in range(MAX_INT_ROT):
                 ranger = Ranger(start=i * ROWS_PER_ROT, length=ROWS_PER_ROT)
+                segment, rem = Utils.paragraphing(
+                    SensorData(train_workbooks, state), ranger
+                )
+                train_data.append(segment)
+
+        print("Training...")
+
+        model = RandomForest(*train_data)
+
+        for i in range(1, MAX_INT_ROT + 1):
+            print(f"Testing round {i}")
+
+            test_data = []
+            for state in state_list:
+                ranger = Ranger(start=(i - 1) * ROWS_PER_ROT, length=ROWS_PER_ROT)
                 test_segment, _ = Utils.paragraphing(
-                    SensorData(workbooks, state), ranger
+                    SensorData(test_workbooks, state), ranger
                 )
                 test_data.append(test_segment)
 
-            model = RandomForest(*train_data)
             predicted_states = []
 
             for test in test_data:
@@ -61,6 +74,7 @@ if __name__ == "__main__":
 
         print("State prediction completed, Now closing workbooks...")
 
-        workbooks.wclose()
+        train_workbooks.wclose()
+        test_workbooks.wclose()
 
         print("Workbooks closed, Exiting...")

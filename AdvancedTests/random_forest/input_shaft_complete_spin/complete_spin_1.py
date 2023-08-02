@@ -12,13 +12,13 @@ from datetime import datetime
 
 ROWS = 204800
 HZ = 25600
-RPM = 305
+RPM = 1475
 RPS = RPM / 60
 ROWS_PER_ROT = ceil(HZ / RPS)
 MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
 
 FPATH = OS_PATH.basename(ARGV[0])
-EXPORT = f"./TestResults/random_forest/output_shaft_complete_spin/{FPATH}.csv"
+EXPORT = f"./TestResults/random_forest/input_shaft_complete_spin/{FPATH}.csv"
 
 
 if __name__ == "__main__":
