@@ -1,5 +1,4 @@
 #!/bin/bash
-
 {
     echo "Executing Advanced Tests: Neural Network Input Shaft Cross Validate"
     python3 -u "./AdvancedTests/neural_network/input_shaft_cross_validate/cross_5fold_1.py"
