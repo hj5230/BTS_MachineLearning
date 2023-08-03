@@ -1,5 +1,4 @@
 #!/bin/bash
-
 {
     echo "Executing Advanced Tests: Random Forest Output Shaft Cross Validate"
     python3 -u "./AdvancedTests/random_forest/output_shaft_cross_validate/cross_5fold_1.py"

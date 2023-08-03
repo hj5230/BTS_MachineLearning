@@ -1,5 +1,4 @@
 #!/bin/bash
-
 {
     echo "Executing Advanced Tests: Random Forest Input Shaft Complete Spin"
     python3 -u "./AdvancedTests/random_forest/output_shaft_complete_spin/complete_spin_1.py"
