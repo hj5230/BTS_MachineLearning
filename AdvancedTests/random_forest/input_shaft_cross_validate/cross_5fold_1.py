@@ -19,9 +19,9 @@ ROWS_PER_ROT = ceil(HZ / RPS)
 MAX_INT_ROT = floor(ROWS / ROWS_PER_ROT)
 
 # 5-fold cross-validation
-TRAIN_ROUNDS = 32
-TEST_ROUNDS = 8
-REPEAT = 10
+TRAIN_ROUNDS = 156
+TEST_ROUNDS = 39
+REPEAT = 5
 
 FPATH = OS_PATH.basename(ARGV[0])
 EXPORT = f"./TestResults/random_forest/input_shaft_cross_validate/{FPATH}.csv"
