@@ -1,7 +1,7 @@
 #!/bin/bash
 
 {
-    echo "Executing Advanced Tests: Input Shaft Cross Validate"
+    echo "Executing Advanced Tests: Random Forest Input Shaft Cross Validate"
     python3 -u "./AdvancedTests/random_forest/input_shaft_cross_validate/cross_5fold_1.py"
     python3 -u "./AdvancedTests/random_forest/input_shaft_cross_validate/cross_5fold_2.py"
     python3 -u "./AdvancedTests/random_forest/input_shaft_cross_validate/cross_5fold_1_2.py"
