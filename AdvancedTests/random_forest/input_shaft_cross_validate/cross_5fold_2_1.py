@@ -47,7 +47,7 @@ if __name__ == "__main__":
             train_rounds = random.sample(all_rounds, TRAIN_ROUNDS)
             test_rounds = random.sample(all_rounds, TEST_ROUNDS)
 
-            print(f"Repeating test {_ + 1}/{REPEAT}\nValidate group: {test_rounds}")
+            print(f"Repeating test {_ + 1}/{REPEAT}: {datetime.now()}\nValidate group: {test_rounds}")
 
             train_data = []
             for state in state_list:

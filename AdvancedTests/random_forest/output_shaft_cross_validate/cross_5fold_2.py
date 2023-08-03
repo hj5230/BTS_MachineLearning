@@ -44,7 +44,7 @@ if __name__ == "__main__":
                 round_ for round_ in all_rounds if round_ not in train_rounds
             ]
 
-            print(f"Repeating test {_ + 1}/{REPEAT}\nValidate group: {test_rounds}")
+            print(f"Repeating test {_ + 1}/{REPEAT}: {datetime.now()}\nValidate group: {test_rounds}")
 
             train_data = []
             for state in state_list:
