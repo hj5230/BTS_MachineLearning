@@ -1,5 +1,4 @@
 #!/bin/bash
-
 {
     echo "Executing Advanced Tests: Gradient Boosting Output Shaft Cross Validate"
     python3 -u "./AdvancedTests/gradient_boosting/output_shaft_cross_validate/cross_5fold_1.py"
