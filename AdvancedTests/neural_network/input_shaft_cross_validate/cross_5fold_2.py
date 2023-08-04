@@ -24,7 +24,7 @@ TEST_ROUNDS = 39
 REPEAT = 5
 
 FPATH = OS_PATH.basename(ARGV[0])
-EXPORT = f"./TestResults/neural_netwrok/input_shaft_cross_validate/{FPATH}.csv"
+EXPORT = f"./TestResults/neural_network/input_shaft_cross_validate/{FPATH}.csv"
 
 
 if __name__ == "__main__":
