@@ -24,7 +24,7 @@ TEST_ROUNDS = 39
 REPEAT = 5
 
 FPATH = OS_PATH.basename(ARGV[0])
-EXPORT = f"./TestResults/random_forest/input_shaft_cross_validate/{FPATH}.csv"
+EXPORT = f"./TestResults/gradient_boosting/input_shaft_cross_validate/{FPATH}.csv"
 
 
 if __name__ == "__main__":
