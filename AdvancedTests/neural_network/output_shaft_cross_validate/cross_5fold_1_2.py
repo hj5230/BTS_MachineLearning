@@ -60,7 +60,7 @@ if __name__ == "__main__":
                     )
                     train_data.append(segment)
 
-            model = NeuralNetwork(*train_data)
+            model = ConvolutionalNeuralNetwork(*train_data)
 
             for round_ in test_rounds:
                 test_data = []
