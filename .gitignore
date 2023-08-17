@@ -1,6 +1,7 @@
 __pycache__
 .vscode
 Grocery/
+TestLogs/
 SourceData/*.xlsx
 TestResults/*.tar.xz
-TestLogs/
+Temp.py

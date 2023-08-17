@@ -2,79 +2,78 @@ from SourceData import *
 import numpy as np
 import pandas as pd
 import torch
-from torch import nn, optim
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
 from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
 
-
-class ConvNetModel(nn.Module):
+class SimpleCNN(nn.Module):
     def __init__(self):
-        super(ConvNetModel, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv1d(1, 32, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool1d(kernel_size=2, stride=2),
-        )
-        self.layer2 = nn.Sequential(
-            nn.Conv1d(32, 64, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool1d(kernel_size=2, stride=2),
-        )
-        self.drop_out = nn.Dropout()
-        self.fc1 = nn.Linear(1000, 10)
+        super(SimpleCNN, self).__init__()
+        self.conv1 = nn.Conv1d(1, 32, 3)
+        self.pool = nn.MaxPool1d(2)
+        self.fc1 = nn.Linear(32*2, 64)
+        self.fc2 = nn.Linear(64, 2)  # Assuming binary classification
 
     def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.drop_out(out)
-        out = self.fc1(out)
-        return out
-
+        x = self.pool(F.relu(self.conv1(x)))
+        x = x.view(-1, 32*2)
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
 
 class ConvolutionalNeuralNetwork:
     def __init__(self, *sensor_data_list: SensorData) -> None:
-        self.model = ConvNetModel()
-        self.scaler = StandardScaler()
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = self.model.to(self.device)
-
         features = []
         labels = []
         for sensor_data in sensor_data_list:
             df = sensor_data.dataframing()
             features.append(self.extract_features(df))
             labels.append(sensor_data.state)
-        features = np.stack(features)
-        labels = np.array(labels)
+        features_df = pd.DataFrame(features)
+        labels_s = pd.Series(labels)
+        scaler = StandardScaler()
+        features_scaled = scaler.fit_transform(features_df)
+        features_tensor = torch.tensor(features_scaled, dtype=torch.float32).unsqueeze(1)
+        labels_tensor = torch.tensor(labels_s, dtype=torch.long)
+        dataset = TensorDataset(features_tensor, labels_tensor)
+        loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-        self.scaler.fit(features)
-        features = self.scaler.transform(features)
-
-        features = torch.from_numpy(features).float().to(self.device)
-        labels = torch.from_numpy(labels).long().to(self.device)
-
-        self.model.train()
+        self.model = SimpleCNN()
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
+        optimizer = optim.Adam(self.model.parameters(), lr=0.001)
 
-        for epoch in range(5):  # loop over the dataset multiple times
-            optimizer.zero_grad()
-            outputs = self.model(features.unsqueeze(1))
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
+        for epoch in range(10):  # Training for 10 epochs
+            for data, target in loader:
+                optimizer.zero_grad()
+                outputs = self.model(data)
+                loss = criterion(outputs, target)
+                loss.backward()
+                optimizer.step()
+
+        self.scaler = scaler
 
     def extract_features(self, df: pd.DataFrame) -> list[float]:
-        features = df.values.astype(np.float32)
+        features = []
+        for col in df.columns:
+            features.append(df[col].mean())
+            features.append(df[col].std())
+            features.append(df[col].skew())
+            features.append(df[col].kurtosis())
         return features
 
     def predict_state(self, sensor_data: SensorData) -> np.ndarray:
-        self.model.eval()
+        df = sensor_data.dataframing()
+        features = self.extract_features(df)
+        features_df = pd.DataFrame([features])
+        features_scaled = self.scaler.transform(features_df)
+        features_tensor = torch.tensor(features_scaled, dtype=torch.float32).unsqueeze(1)
         with torch.no_grad():
-            df = sensor_data.dataframing()
-            features = self.extract_features(df)
-            features = self.scaler.transform(features.reshape(1, -1))
-            features = torch.from_numpy(features).float().to(self.device)
-            outputs = self.model(features.unsqueeze(1))
-            _, predicted = torch.max(outputs.data, 1)
-        return predicted.cpu().numpy()
+            outputs = self.model(features_tensor)
+            _, predicted = torch.max(outputs, 1)
+        return predicted.numpy()
+
+
+if __name__ == '__main__':
+    ConvolutionalNeuralNetwork()
