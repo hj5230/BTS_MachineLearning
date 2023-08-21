@@ -17,7 +17,7 @@ from RandomForest import *
 
 if __name__ == "__main__":
     # Specifies the range of the predicting dataset
-    ranger = Ranger(start=0, length=512)
+    ranger = Ranger(start=0, length=40960)
 
     print("Loading workbooks...\n")
 
