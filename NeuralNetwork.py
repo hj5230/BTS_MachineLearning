@@ -1,17 +1,13 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from typing import List
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-
 from SourceData import *
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class ConvolutionalNeuralNetwork(nn.Module):
-    def __init__(self, *sensor_data_list: List[SensorData], num_layers=2, num_filters=16):
+    def __init__(self, *sensor_data_list: [SensorData], num_layers=2, num_filters=16):
         super(ConvolutionalNeuralNetwork, self).__init__()
         self.num_layers = num_layers
         self.num_filters = num_filters
@@ -23,16 +19,11 @@ class ConvolutionalNeuralNetwork(nn.Module):
             features.append(torch.Tensor(df.values))
             labels.append(sensor_data.state)
         features_tensor = torch.cat(features)
-        # 创建一个字典来映射字符串标签到数字标签
-        self.label_to_index = {label: index for index, label in enumerate(set(labels))}
-        # 将字符串标签列表转换为数字标签列表
+        self.label_to_index = {label: index for index, label in enumerate(np.unique(labels))}
         labels = [self.label_to_index[label] for label in labels]
         labels_tensor = torch.Tensor(np.array(labels)).to(torch.long)
-        scaler = StandardScaler()
-        features_tensor = torch.Tensor(scaler.fit_transform(features_tensor))
         features_tensor = features_tensor.view(len(features), 1, -1)
         input_size = (features_tensor.shape[0], features_tensor.shape[2])
-
         layers = []
         input_channel = 1
         for i in range(num_layers):
@@ -52,10 +43,10 @@ class ConvolutionalNeuralNetwork(nn.Module):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
         x = self.fc3(x)
-        x = torch.sigmoid(x)
+        x = torch.softmax(x, dim=1)
         return x
 
-    def train_model(self, x, y, epochs=20, learning_rate=0.001):
+    def train_model(self, x, y, epochs=100, learning_rate=0.001):
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
         self.to(device)
@@ -63,7 +54,7 @@ class ConvolutionalNeuralNetwork(nn.Module):
         y = y.to(device)
         for i in range(epochs):
             optimizer.zero_grad()
-            outputs = self(x)
+            outputs = self.forward(x)
             loss = criterion(outputs, y)
             loss.backward()
             optimizer.step()
@@ -77,16 +68,11 @@ class ConvolutionalNeuralNetwork(nn.Module):
         features.append(torch.Tensor(df.values))
         labels.append(sensor_data.state)
         features_tensor = torch.cat(features)
-        # 将字符串标签列表转换为数字标签列表
-        labels = [self.label_to_index[label] for label in labels]
-        labels_tensor = torch.Tensor(np.array(labels)).to(torch.long)
-        scaler = StandardScaler()
-        features_tensor = torch.Tensor(scaler.fit_transform(features_tensor))
         features_tensor = features_tensor.view(len(features), 1, -1)
         self.eval()
         with torch.no_grad():
             features_tensor = features_tensor.to(device)
-            outputs = self(features_tensor)
+            outputs = self.forward(features_tensor)
             _, predicted = torch.max(outputs.data, 1)
         index_to_label = {index: label for label, index in self.label_to_index.items()}
         predicted = [index_to_label[index.item()] for index in predicted]
