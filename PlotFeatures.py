@@ -1,4 +1,4 @@
-from random import randint, choice
+from random import randint
 import matplotlib.pyplot as plt
 from SourceData import *
 
@@ -10,7 +10,6 @@ if __name__ == '__main__':
     for state in ['1', '3', '9', '13', '15']:
         print('Workbooks loaded, now processing data...')
         dataframe = SensorData(workbooks, state).dataframing()
-        # column = choice(dataframe.columns)
         column = 'x1'
         column_data = dataframe[column]
         avg_val = column_data.mean()
